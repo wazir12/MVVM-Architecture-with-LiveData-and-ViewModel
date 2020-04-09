@@ -40,14 +40,25 @@ private lateinit var  binding : FragmentScoreBinding
         //getting instance of scoreViewModelFactory
         viewModelFactory = ScoreViewModelFactory(ScoreFragmentArgs.fromBundle(arguments!!).score)
         scoreViewModel = ViewModelProvider(this,viewModelFactory).get(ScoreViewModel::class.java)
+//TODO: Pass the ScoreViewModel into the data binding and remove OnClickListener setup for playAgainButton.
+        binding.scoreViewModel = scoreViewModel
         // Get args using by navArgs property delegate
         scoreViewModel.final_score.observe(viewLifecycleOwner, Observer{finalScore->
             binding.scoreText.text = finalScore.toString()
         })
+        binding.playAgainButton.setOnClickListener { scoreViewModel.onPlayAgain() }
+
+        // TODO: Observe the eventPlayAgain value and according navigate to title page
+        scoreViewModel.eventPlayAgain.observe(viewLifecycleOwner, Observer { playAgain ->
+            if (playAgain) {
+                findNavController().navigate(ScoreFragmentDirections.actionRestart())
+                scoreViewModel.onPlayAgainComplete()
+            }
+        })
         //val scoreFragmentArgs by navArgs<ScoreFragmentArgs>()
-         val args = ScoreFragmentArgs.fromBundle(arguments!!)
+        // val args = ScoreFragmentArgs.fromBundle(arguments!!)
          //binding.scoreText.text = args.score.toString()
-        binding.playAgainButton.setOnClickListener { onPlayAgain() }
+
 
         return binding.root
     }
