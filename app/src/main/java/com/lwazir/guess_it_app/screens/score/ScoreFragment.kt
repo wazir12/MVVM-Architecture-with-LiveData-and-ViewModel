@@ -42,10 +42,13 @@ private lateinit var  binding : FragmentScoreBinding
         scoreViewModel = ViewModelProvider(this,viewModelFactory).get(ScoreViewModel::class.java)
 //TODO: Pass the ScoreViewModel into the data binding and remove OnClickListener setup for playAgainButton.
         binding.scoreViewModel = scoreViewModel
-        // Get args using by navArgs property delegate
-        scoreViewModel.final_score.observe(viewLifecycleOwner, Observer{finalScore->
-            binding.scoreText.text = finalScore.toString()
-        })
+        binding.setLifecycleOwner(this)
+
+
+        //TODO : removing final score observer
+ //       scoreViewModel.final_score.observe(viewLifecycleOwner, Observer{finalScore->
+   //         binding.scoreText.text = finalScore.toString()
+     //   })
         binding.playAgainButton.setOnClickListener { scoreViewModel.onPlayAgain() }
 
         // TODO: Observe the eventPlayAgain value and according navigate to title page
