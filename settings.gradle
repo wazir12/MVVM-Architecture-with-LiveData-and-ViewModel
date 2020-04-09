@@ -1,0 +1,2 @@
+rootProject.name='guess-it-App'
+include ':app'
