@@ -1,9 +1,11 @@
 package com.lwazir.guess_it_app.screens.game
 
 import android.os.CountDownTimer
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 
 class GameViewModel : ViewModel() {
@@ -23,6 +25,11 @@ class GameViewModel : ViewModel() {
     //external
     val currentTime: LiveData<Long>
         get() = _currentTime
+//TODO: Create a new Live data called currentTimeString and use Transformation.map to transform currentTime value to suitable date format
+     val currentTimeString = Transformations.map(currentTime, {time->
+    DateUtils.formatElapsedTime(time)
+})
+
 
 
     //timer
