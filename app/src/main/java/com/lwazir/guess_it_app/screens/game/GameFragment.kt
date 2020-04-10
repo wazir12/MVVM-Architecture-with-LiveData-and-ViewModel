@@ -1,12 +1,17 @@
 package com.lwazir.guess_it_app.screens.game
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -21,10 +26,15 @@ import com.lwazir.guess_it_app.screens.score.ScoreViewModelFactory
 /**
  * Fragment where the game is played
  */
+
 class GameFragment : Fragment() {
+    private val CORRECT_BUZZ_PATTERN = longArrayOf(100, 100, 100, 100, 100, 100)
+    private val PANIC_BUZZ_PATTERN = longArrayOf(0, 200)
+    private val GAME_OVER_BUZZ_PATTERN = longArrayOf(0, 2000)
+    private val NO_BUZZ_PATTERN = longArrayOf(0)
 
 
-    private lateinit var viewModel: GameViewModel
+     private lateinit var viewModel :  GameViewModel
 
 
     private lateinit var binding: FragmentGameBinding
@@ -59,12 +69,16 @@ class GameFragment : Fragment() {
         viewModel.gameFinished.observe(viewLifecycleOwner, Observer { hasFinished ->
             if(hasFinished){
                 gameFinished()
+                buzz(GAME_OVER_BUZZ_PATTERN)
                 viewModel.onGameFinishedComplete()
             }
         })
-     /*   viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
-            binding.timerText.text = DateUtils.formatElapsedTime(newTime)
-        })*/
+       viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
+            if(newTime < 5000)
+            {
+                buzz(PANIC_BUZZ_PATTERN)
+            }
+        })
         return binding.root
 
     }
@@ -79,17 +93,24 @@ class GameFragment : Fragment() {
 
         findNavController(this).navigate(action)
     }
+    private fun buzz(pattern: LongArray) {
+ val buzzer = activity?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+        buzzer?.let {
 
 
 
-    /** Methods for updating the UI **/
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                buzzer.vibrate(VibrationEffect.createWaveform(pattern, -1))
+            } else {
+                //deprecated in API 26
+                buzzer.vibrate(pattern, -1)
+            }
 
-    private fun updateWordText() {
-        binding.wordText.text = viewModel.word.value
-
+        }
     }
 
-    private fun updateScoreText() {
-        binding.scoreText.text =viewModel.score.toString()
-    }
+
+
+
 }
