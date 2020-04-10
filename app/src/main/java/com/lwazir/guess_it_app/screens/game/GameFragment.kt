@@ -42,26 +42,29 @@ class GameFragment : Fragment() {
         //getting reference to game view model created by jetpack lifecycle library
         Log.i("GameFragment","GameViewModel called")
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
-
-
-
-        binding.correctButton.setOnClickListener { viewModel.onCorrect()}
-        binding.skipButton.setOnClickListener {viewModel.onSkip() }
-        viewModel.word.observe(viewLifecycleOwner, Observer { wordText ->
+//TODO: Pass the GameViewModel into the data binding:
+        binding.gameViewModel = viewModel
+//TODO: Remove the onClickListeners
+        //binding.correctButton.setOnClickListener { viewModel.onCorrect()}
+      //  binding.skipButton.setOnClickListener {viewModel.onSkip() }
+        //TODO:Call binding.setLifecycleOwner to make the data binding lifecycle aware
+        binding.setLifecycleOwner (this)
+        //TODO: Remove the score and word observers:
+        /*viewModel.word.observe(viewLifecycleOwner, Observer { wordText ->
             binding.wordText.text = wordText.toString()
         })
         viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
             binding.scoreText.text = newScore.toString()
-        })
+        })**/
         viewModel.gameFinished.observe(viewLifecycleOwner, Observer { hasFinished ->
             if(hasFinished){
                 gameFinished()
                 viewModel.onGameFinishedComplete()
             }
         })
-        viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
+     /*   viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
             binding.timerText.text = DateUtils.formatElapsedTime(newTime)
-        })
+        })*/
         return binding.root
 
     }
